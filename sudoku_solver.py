@@ -9,7 +9,8 @@ testgrid = [
     [0, 0, 6, 0, 0, 0, 1, 5, 8],
     [0, 0, 0, 2, 5, 6, 0, 0, 0]]
 
-#prints output to scree
+
+# prints output to scree
 def print_grid(grid):
     for i in range(9):
         for j in range(9):
@@ -17,7 +18,7 @@ def print_grid(grid):
         print("", end='\n')
 
 
-#checks if current location is empty and assign location if true
+# checks if current location is empty and assign location if true
 def empty_location(grid, location):
     for i in range(9):
         for j in range(9):
@@ -26,6 +27,7 @@ def empty_location(grid, location):
                 location[1] = j
                 return True
     return False
+
 
 # checks if num is in row
 def used_in_row(grid, row, num):
@@ -53,11 +55,12 @@ def used_in_box(grid, row, col, num):
 
 
 def move_ok(grid, row, col, num):
-    return not used_in_row(grid, row, num) and not used_in_col(grid, col, num) and not used_in_box(grid, row - row % 3, col - col % 3, num)
+    # (row - row %3 & col - col %3 ensures we are checking the correct 3x3 grid in used in bow function)
+    return not used_in_row(grid, row, num) and not used_in_col(grid, col, num) and not used_in_box(grid, row - row % 3,
+                                                                                                   col - col % 3, num)
 
 
 def solver(grid):
-
     location = [0, 0]
 
     if not empty_location(testgrid, location):
@@ -68,7 +71,7 @@ def solver(grid):
 
     for num in range(1, 10):
 
-        if (move_ok(testgrid, row, col, num)):
+        if move_ok(testgrid, row, col, num):
 
             testgrid[row][col] = num
             if solver(testgrid):
@@ -79,8 +82,7 @@ def solver(grid):
     return False
 
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
 
     if solver(testgrid):
         print_grid(testgrid)
