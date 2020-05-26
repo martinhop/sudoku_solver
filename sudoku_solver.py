@@ -1,13 +1,8 @@
-testgrid = [
-    [9, 1, 0, 4, 0, 0, 0, 0, 0],
-    [0, 0, 7, 0, 0, 5, 0, 4, 0],
-    [0, 0, 4, 0, 0, 0, 0, 0, 0],
-    [0, 0, 9, 0, 3, 0, 5, 0, 6],
-    [0, 0, 0, 5, 9, 0, 4, 3, 0],
-    [5, 0, 8, 0, 6, 0, 0, 1, 2],
-    [0, 0, 5, 0, 7, 0, 0, 0, 9],
-    [0, 0, 6, 0, 0, 0, 1, 5, 8],
-    [0, 0, 0, 2, 5, 6, 0, 0, 0]]
+
+
+
+
+
 
 
 # prints output to scree
@@ -82,9 +77,13 @@ def solver(grid):
     return False
 
 
+
+
 if __name__ == "__main__":
 
-    if solver(testgrid):
-        print_grid(testgrid)
-    else:
-        print('No possible solution!')
+    main()
+
+    #if solver(testgrid):
+        #print_grid(testgrid)
+    #else:
+        #print('No possible solution!')
