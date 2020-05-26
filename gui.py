@@ -10,12 +10,10 @@ white = (255,255,255)
 black = (0,0,0)
 grey = (128,128,128)
 
-#Set-up initial screen
 WIDTH, HEIGHT = 800, 800
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Sudoku Solver')
 
-
+SCROFFSETX = 130
+SCROFFSETY = 75
 
 class Grid():
     board = [
@@ -32,17 +30,31 @@ class Grid():
     def __init__(self, rows, cols, width, height):
         self.rows = rows
         self.cols = cols
-        self.cells =[[Cell(self.board[i][j], i, j, width, height) for j in range(cols) for i in range(rows)]]
+        self.cells =[[Cell(self.board[i][j], i, j, width, height) for j in range(cols)] for i in range(rows)]
         self.width = width
         self.height = height
         self.model = None
         self.selected = None
 
     def update_model(self):
-        pass
+        self.model = [[self.cells[i][j].value for j in range(self.cols)] for i in range(self.rows)]
 
-    def place(self):
-        pass
+    def place(self, val):
+
+        #*********CHECK THIS AS WILL NEED UPDATING TO WORK WITH MY SOLVER SCRIPT***********
+
+        row, col = self.selected
+        if self.cells[row][col].value == 0:
+            self.cells[row][col].set(val)
+            self.update_model()
+
+        if valid(self.model, val, (row, col)) and solve(self.model):
+            return True
+        else:
+            self.cells[row][col].set(0)
+            self.cells[row][col].set_temp(0)
+            self.update_model()
+            return False
 
     def sketch(self, val):
         row, col = self.selected
@@ -50,21 +62,22 @@ class Grid():
 
     def draw(self, win):
 
+
         # draw grid to screen
         space = self.width / 9
         for i in range(self.rows+1):
-            if i %3 == 0 and i != 0:
+            if i %3 == 0 and i != 0 and i != 9:
                 line_weight = 4
             else:
                 line_weight = 1
 
-            pygame.draw.line(WIN, black, (130, i* gap), (self.width, i*gap), line_weight)
-            pygame.draw.line(WIN, black, (i*gap, 100), (i*gap, self.height), line_weight)
+            pygame.draw.line(win, black, (SCROFFSETX, i*space+ SCROFFSETY), (self.width+ SCROFFSETX, i*space + SCROFFSETY), line_weight)
+            pygame.draw.line(win, black, (i*space + SCROFFSETX, SCROFFSETY), (i*space + SCROFFSETX, self.height + SCROFFSETY), line_weight)
 
         #draw cells to screen
         for i in range(self.rows):
             for j in range(self.cols):
-                self.cells[i][j].draw(WIN)
+                self.cells[i][j].draw(win)
 
     def select(self, row, col):
         #deselects all other cells
@@ -75,7 +88,6 @@ class Grid():
         #selects required cell
         self.cells[row][col].selected = True
         self.selected = (row, col)
-
 
     def clear(self):
 
@@ -92,8 +104,8 @@ class Grid():
 
         if pos[0] < self.width and pos[1] < self.height:
             space = self.width/9
-            x = pos[0] // space
-            y = pos[1] // space
+            x = (pos[0] // space)
+            y = (pos[1] // space)
             return (int(x), int(y))
         else:
             return None
@@ -122,18 +134,18 @@ class Cell():
         numfont = pygame.font.SysFont('calibri', 40)
 
         space = self.width / 9
-        x = self.col * space
-        y = self.row * space
+        x = (self.col * space) + SCROFFSETX
+        y = (self.row * space) + SCROFFSETY
 
         if self.temp != 0 and self.value == 0:
             num = numfont.render(str(self.temp), 1, grey)
-            WIN.blit(num, (x+5, y+5))
+            win.blit(num, (x+5, y+5))
         elif not self.value == 0:
             num = numfont.render(str(self.value), 1, black)
-            WIN.blit(num, (x + (space/2 - num.get_width()/2), y + (space/2 - num.get_height()/2)))
+            win.blit(num, (x + (space/2 - num.get_width()/2), y + (space/2 - num.get_height()/2)))
 
         if self.selected:
-            pygame.draw.rect(WIN, green, (x, y, space, space), 3)
+            pygame.draw.rect(win, green, (x, y, space, space), 3)
 
     def set(self, val):
         self.value = val
@@ -166,6 +178,11 @@ def format_time(secs):
     return for_time
 
 def main():
+    # Set-up initial screen
+
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption('Sudoku Solver')
+
     key = None
     run = True
     board = Grid(9, 9, 540, 540)
@@ -214,7 +231,7 @@ def main():
                 pos = pygame.mouse.get_pos()
                 clicked = board.click(pos)
                 if clicked:
-                    board.select(clicked[0], clicked[1])
+                    board.select(clicked[1], clicked[0])
                     key = None
 
         if board.selected and key != None:
