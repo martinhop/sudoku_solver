@@ -142,16 +142,20 @@ class Cell():
         self.temp = val
 
 def redraw_window(win, board, time, strikes):
-    WIN.fill(white)
+    win.fill(white)
+    titlefont = pygame.font.SysFont('calibri', 50)
     font = pygame.font.SysFont('calibri', 40)
+    #Displays the title
+    titlelabel = titlefont.render('Sudoku Solver', 1, red)
+    win.blit(titlelabel, (WIDTH / 2 - titlelabel.get_width() / 2, 10))
     #Display time
     text = font.render("Time: " + format_time(time), 1, black)
-    WIN.blit(text, (800-160, 700))
+    win.blit(text, (800-160, 700))
     #incorrect guesses
     text = font.render("X" * strikes, 1, red)
-    WIN.blit(text, (160, 700))
+    win.blit(text, (160, 700))
     #Draw board and grid
-    board.draw(WIN)
+    board.draw(win)
 
 def format_time(secs):
     sec = secs%60
@@ -162,27 +166,62 @@ def format_time(secs):
     return for_time
 
 def main():
+    key = None
     run = True
     board = Grid(9, 9, 540, 540)
-
-    titlefont = pygame.font.SysFont('calibri', 50)
-    gamefont = pygame.font.SysFont('calibri', 30)
-
-    def redraw_window():
-
-        titlelabel = titlefont.render('Sudoku Solver', 1, red)
-
-        WIN.blit(titlelabel, (WIDTH/2-titlelabel.get_width()/2, 10))
-
-        draw_grid()
-
-        pygame.display.update()
+    start = time.time()
+    strikes = 0
 
     while run:
-        redraw_window()
+        play_time = round(time.time() - start)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    key = 1
+                if event.key == pygame.K_2:
+                    key = 2
+                if event.key == pygame.K_3:
+                    key = 3
+                if event.key == pygame.K_4:
+                    key = 4
+                if event.key == pygame.K_5:
+                    key = 5
+                if event.key == pygame.K_6:
+                    key = 6
+                if event.key == pygame.K_7:
+                    key = 7
+                if event.key == pygame.K_8:
+                    key = 8
+                if event.key == pygame.K_9:
+                    key = 9
+                if event.key == pygame.K_DELETE:
+                    board.clear()
+                    key = None
+                if event.key == pygame.K_RETURN:
+                    i, j = board.selected
+                    if board.cells[i][j].temp != 0:
+                        if board.place(board.cells[i][j].temp):
+                            print('Success')
+                        else:
+                            print(Wrong)
+                            strikes += 1
+                            key = None
 
-        pass
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                clicked = board.click(pos)
+                if clicked:
+                    board.select(clicked[0], clicked[1])
+                    key = None
+
+        if board.selected and key != None:
+            board.sketch(key)
+
+        redraw_window(WIN, board, play_time, strikes)
+        pygame.display.update()
+
+main()
+
