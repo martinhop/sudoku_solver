@@ -9,10 +9,12 @@ green = (0,255,0)
 white = (255,255,255)
 black = (0,0,0)
 grey = (128,128,128)
+lgrey = (237, 237, 237)
 
 WIDTH, HEIGHT = 800, 800
+SURWIDTH, SURHEIGHT = 540, 540
 
-SCROFFSETX = 130
+SCROFFSETX = (WIDTH/2)-(SURWIDTH/2)
 SCROFFSETY = 75
 
 class Grid():
@@ -60,7 +62,7 @@ class Grid():
         row, col = self.selected
         self.cells[row][col].set_temp(val)
 
-    def draw(self, win):
+    def draw(self, surface):
 
 
         # draw grid to screen
@@ -71,13 +73,13 @@ class Grid():
             else:
                 line_weight = 1
 
-            pygame.draw.line(win, black, (SCROFFSETX, i*space+ SCROFFSETY), (self.width+ SCROFFSETX, i*space + SCROFFSETY), line_weight)
-            pygame.draw.line(win, black, (i*space + SCROFFSETX, SCROFFSETY), (i*space + SCROFFSETX, self.height + SCROFFSETY), line_weight)
+            pygame.draw.line(surface, black, (0, i*space), (self.width, i*space), line_weight)
+            pygame.draw.line(surface, black, (i*space, 0), (i*space, self.height), line_weight)
 
         #draw cells to screen
         for i in range(self.rows):
             for j in range(self.cols):
-                self.cells[i][j].draw(win)
+                self.cells[i][j].draw(surface)
 
     def select(self, row, col):
         #deselects all other cells
@@ -101,12 +103,13 @@ class Grid():
         :param: pos
         :return: (row,col)
         """
-
-        if pos[0] < self.width and pos[1] < self.height:
-            space = self.width/9
-            x = (pos[0] // space)
-            y = (pos[1] // space)
-            return (int(x), int(y))
+        #outer if statement accounts for screen offset placement
+        if pos[0] > SCROFFSETX and pos[1] > SCROFFSETY:
+            if pos[0] <= self.width + SCROFFSETX and pos[1] <= self.height + SCROFFSETY:
+                space = (self.width / 9)
+                x = ((pos[0] - SCROFFSETX) // space)
+                y = ((pos[1] - SCROFFSETY) // space)
+                return (int(x), int(y))
         else:
             return None
 
@@ -130,22 +133,22 @@ class Cell():
         self.height = height
         self.selected = False
 
-    def draw(self, win):
+    def draw(self, surface):
         numfont = pygame.font.SysFont('calibri', 40)
 
         space = self.width / 9
-        x = (self.col * space) + SCROFFSETX
-        y = (self.row * space) + SCROFFSETY
+        x = (self.col * space)
+        y = (self.row * space)
 
         if self.temp != 0 and self.value == 0:
             num = numfont.render(str(self.temp), 1, grey)
-            win.blit(num, (x+5, y+5))
+            surface.blit(num, (x+5, y+5))
         elif not self.value == 0:
             num = numfont.render(str(self.value), 1, black)
-            win.blit(num, (x + (space/2 - num.get_width()/2), y + (space/2 - num.get_height()/2)))
+            surface.blit(num, (x + (space/2 - num.get_width()/2), y + (space/2 - num.get_height()/2)))
 
         if self.selected:
-            pygame.draw.rect(win, green, (x, y, space, space), 3)
+            pygame.draw.rect(surface, green, (x, y, space, space), 3)
 
     def set(self, val):
         self.value = val
@@ -153,13 +156,12 @@ class Cell():
     def set_temp(self, val):
         self.temp = val
 
-def redraw_window(win, board, time, strikes):
+def redraw_window(win, surface, board, time, strikes):
     win.fill(white)
     titlefont = pygame.font.SysFont('calibri', 50)
     font = pygame.font.SysFont('calibri', 40)
     #Displays the title
     titlelabel = titlefont.render('Sudoku Solver', 1, red)
-    #win.blit(surface, (100,100)
     win.blit(titlelabel, (WIDTH / 2 - titlelabel.get_width() / 2, 10))
     #Display time
     text = font.render("Time: " + format_time(time), 1, black)
@@ -167,8 +169,12 @@ def redraw_window(win, board, time, strikes):
     #incorrect guesses
     text = font.render("X" * strikes, 1, red)
     win.blit(text, (160, 700))
-    #Draw board and grid
-    board.draw(win)
+
+
+    #Draw board and grid onto surface
+    surface.fill(lgrey)
+    board.draw(surface)
+    win.blit(surface, (SCROFFSETX, SCROFFSETY))
 
 def format_time(secs):
     sec = secs%60
@@ -182,7 +188,7 @@ def main():
     # Set-up initial screen
 
     WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-    #GAMESUR = pygame.surface((540, 540))
+    SUR = pygame.Surface((SURWIDTH, SURHEIGHT))
     pygame.display.set_caption('Sudoku Solver')
 
     key = None
@@ -231,6 +237,7 @@ def main():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
+                print(pos)
                 clicked = board.click(pos)
                 if clicked:
                     board.select(clicked[1], clicked[0])
@@ -239,7 +246,7 @@ def main():
         if board.selected and key != None:
             board.sketch(key)
 
-        redraw_window(WIN, board, play_time, strikes)
+        redraw_window(WIN, SUR, board, play_time, strikes)
         pygame.display.update()
 
 main()
