@@ -159,6 +159,7 @@ def redraw_window(win, board, time, strikes):
     font = pygame.font.SysFont('calibri', 40)
     #Displays the title
     titlelabel = titlefont.render('Sudoku Solver', 1, red)
+    #win.blit(surface, (100,100)
     win.blit(titlelabel, (WIDTH / 2 - titlelabel.get_width() / 2, 10))
     #Display time
     text = font.render("Time: " + format_time(time), 1, black)
@@ -181,6 +182,7 @@ def main():
     # Set-up initial screen
 
     WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+    #GAMESUR = pygame.surface((540, 540))
     pygame.display.set_caption('Sudoku Solver')
 
     key = None
