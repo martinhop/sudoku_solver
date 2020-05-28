@@ -1,5 +1,6 @@
 import pygame
 import time
+from sudoku_solver import valid, solve
 
 pygame.font.init()
 
@@ -12,7 +13,7 @@ grey = (128,128,128)
 lgrey = (237, 237, 237)
 
 WIDTH, HEIGHT = 800, 800
-SURWIDTH, SURHEIGHT = 540, 540
+SURWIDTH, SURHEIGHT = 541, 541
 
 SCROFFSETX = (WIDTH/2)-(SURWIDTH/2)
 SCROFFSETY = 75
@@ -231,7 +232,7 @@ def main():
                         if board.place(board.cells[i][j].temp):
                             print('Success')
                         else:
-                            print(Wrong)
+                            print('Wrong')
                             strikes += 1
                             key = None
 
