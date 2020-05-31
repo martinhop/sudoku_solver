@@ -1,5 +1,14 @@
 
-
+testgrid = [
+     [9, 1, 0, 4, 0, 0, 0, 0, 0],
+     [0, 0, 7, 0, 0, 5, 0, 4, 0],
+     [0, 0, 4, 0, 0, 0, 0, 0, 0],
+     [0, 0, 9, 0, 3, 0, 5, 0, 6],
+     [0, 0, 0, 5, 9, 0, 4, 3, 0],
+     [5, 0, 8, 0, 6, 0, 0, 1, 2],
+     [0, 0, 5, 0, 7, 0, 0, 0, 9],
+     [0, 0, 6, 0, 0, 0, 1, 5, 8],
+     [0, 0, 0, 2, 5, 6, 0, 0, 0]]
 
 
 
@@ -62,3 +71,40 @@ def solve(grid):
             grid[row][col] = 0
 
     return False
+
+def autosolver(grid):
+
+    location = [0, 0]
+
+    if not autoempty_location(grid, location):
+        return True
+
+    row, col = location[0], location[1]
+
+    for num in range(1, 10):
+
+        if (move_ok(grid, row, col, num)):
+
+            grid[row][col] = num
+            if autosolver(grid):
+                return grid
+
+            grid[row][col] = 0
+    return False
+
+def autoempty_location(grid, location):
+    for i in range(9):
+        for j in range(9):
+            if grid[i][j] == 0:
+                location[0], location[1] = i, j
+                return True
+    return False
+
+
+def move_ok(grid, row, col, num):
+    return valid(grid, num, (row,col))
+
+if __name__ == '__main__':
+
+    autosolver(testgrid)
+    print_grid(testgrid)

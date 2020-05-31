@@ -1,6 +1,6 @@
 import pygame
 import time
-from sudoku_solver import valid, solve
+from sudoku_solver import valid, solve, autosolver
 
 pygame.font.init()
 
@@ -12,14 +12,19 @@ black = (0,0,0)
 grey = (128,128,128)
 lgrey = (237, 237, 237)
 
+# Set-up initial screen
 WIDTH, HEIGHT = 800, 800
 SURWIDTH, SURHEIGHT = 541, 541
-
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+SUR = pygame.Surface((SURWIDTH, SURHEIGHT))
+pygame.display.set_caption('Sudoku Solver')
 SCROFFSETX = (WIDTH/2)-(SURWIDTH/2)
 SCROFFSETY = 75
 
 class Grid():
-    board = [
+
+    def __init__(self, rows, cols, width, height):
+        self.board = [
         [9, 1, 0, 4, 0, 0, 0, 0, 0],
         [0, 0, 7, 0, 0, 5, 0, 4, 0],
         [0, 0, 4, 0, 0, 0, 0, 0, 0],
@@ -29,11 +34,9 @@ class Grid():
         [0, 0, 5, 0, 7, 0, 0, 0, 9],
         [0, 0, 6, 0, 0, 0, 1, 5, 8],
         [0, 0, 0, 2, 5, 6, 0, 0, 0]]
-
-    def __init__(self, rows, cols, width, height):
         self.rows = rows
         self.cols = cols
-        self.cells =[[Cell(self.board[i][j], i, j, width, height) for j in range(cols)] for i in range(rows)]
+        self.cells = [[Cell(self.board[i][j], i, j, width, height) for j in range(cols)] for i in range(rows)]
         self.width = width
         self.height = height
         self.model = None
@@ -43,8 +46,6 @@ class Grid():
         self.model = [[self.cells[i][j].value for j in range(self.cols)] for i in range(self.rows)]
 
     def place(self, val):
-
-        #*********CHECK THIS AS WILL NEED UPDATING TO WORK WITH MY SOLVER SCRIPT***********
 
         row, col = self.selected
         if self.cells[row][col].value == 0:
@@ -58,6 +59,24 @@ class Grid():
             self.cells[row][col].set_temp(0)
             self.update_model()
             return False
+
+    def autoplace(self):
+        self.update_model()
+        self.board = autosolver(self.model)
+        print(self.board[0][0])
+        for i in range(9):
+            for j in range(9):
+                self.selected = i, j
+                val = self.board[i][j]
+                self.place(val)
+
+
+
+
+
+        #return final
+
+
 
     def sketch(self, val):
         row, col = self.selected
@@ -162,7 +181,7 @@ def redraw_window(win, surface, board, time, strikes):
     titlefont = pygame.font.SysFont('calibri', 50)
     font = pygame.font.SysFont('calibri', 40)
     #Displays the title
-    titlelabel = titlefont.render('Sudoku Solver', 1, red)
+    titlelabel = titlefont.render('Sudoku Game & Solver', 1, red)
     win.blit(titlelabel, (WIDTH / 2 - titlelabel.get_width() / 2, 10))
     #Display time
     text = font.render("Time: " + format_time(time), 1, black)
@@ -186,20 +205,17 @@ def format_time(secs):
     return for_time
 
 def main():
-    # Set-up initial screen
-
-    WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-    SUR = pygame.Surface((SURWIDTH, SURHEIGHT))
-    pygame.display.set_caption('Sudoku Solver')
 
     key = None
     run = True
     board = Grid(9, 9, 540, 540)
     start = time.time()
     strikes = 0
+    solved = False
 
     while run:
-        play_time = round(time.time() - start)
+        if not solved:
+            play_time = round(time.time() - start)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -234,7 +250,17 @@ def main():
                         else:
                             print('Wrong')
                             strikes += 1
-                            key = None
+                        key = None
+
+                        if board.is_finished():
+                            print('Game Over')
+
+                        #    run = False
+                if event.key == pygame.K_SPACE:
+                    key = None
+                    solved = True
+                    board.autoplace()
+
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
@@ -247,8 +273,35 @@ def main():
         if board.selected and key != None:
             board.sketch(key)
 
+
+
         redraw_window(WIN, SUR, board, play_time, strikes)
         pygame.display.update()
 
-main()
+def menu():
+
+    run = True
+
+    while run:
+
+        WIN.fill(white)
+        menufont = pygame.font.SysFont('calibri', 80)
+        menulabel1 = menufont.render('Suduko Game', 1, red)
+        menulabel2 = menufont.render('&', 1, red)
+        menulabel3 = menufont.render('Solver', 1, red)
+        menulabel4 = menufont.render('Press any key to start', 1, red)
+        WIN.blit(menulabel1, (WIDTH/2 - menulabel1.get_width()/2, 250))
+        WIN.blit(menulabel2, (WIDTH / 2 - menulabel2.get_width() / 2, 300))
+        WIN.blit(menulabel3, (WIDTH / 2 - menulabel3.get_width() / 2, 350))
+        WIN.blit(menulabel4, (WIDTH / 2 - menulabel4.get_width() / 2, 650))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit()
+            if event.type == pygame.KEYDOWN:
+                main()
+
+        pygame.display.update()
+
+menu()
 
