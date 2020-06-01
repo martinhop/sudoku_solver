@@ -14,7 +14,8 @@ This suduko appication to allows the user to play a traditional game of suduko a
 # Menu Screen
 
 - Press 'I' to view instructions
-- Press 'S' to start new game
+- Press 'S' to enter solver mode.
+- Press 'Space' to start new game
 
 # Instruction Screen
 
@@ -34,8 +35,7 @@ Play a traditional game
 
 Enter Solver Mode
 
-- Press 'S' to enter solver mode. (note current grid will be emptied)
-- Select a known empty cell and in input number
+- Select a known cell and in input number hit enter to commit
 - Repeat for all known numbers
 - Press 'space' to solve grid
 - Once solved press any key to return to main menu
