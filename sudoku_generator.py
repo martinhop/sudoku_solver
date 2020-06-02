@@ -36,9 +36,7 @@ class SudokuGenerator:
     def generate_puzzle(self):
         """generates a new puzzle and solves it"""
         self.generate_solution(self.grid)
-        self.print_grid('full solution')
         self.remove_numbers_from_grid()
-        self.print_grid('with removed numbers')
         return self.grid
 
     def print_grid(self, grid_name=None):

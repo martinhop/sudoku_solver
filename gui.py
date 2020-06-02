@@ -11,7 +11,8 @@ green = (0, 255, 0)
 white = (255, 255, 255)
 black = (0, 0, 0)
 grey = (128, 128, 128)
-lgrey = (237, 237, 237)
+lgrey = (182, 182, 182)
+BG = pygame.image.load('BG.png')
 
 # Set-up initial screen
 WIDTH, HEIGHT = 800, 800
@@ -24,33 +25,11 @@ SCROFFSETY = 75
 
 
 class Grid:
-    empty = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0]]
-
-    gameboard = [
-        [9, 1, 0, 4, 0, 0, 0, 0, 0],
-        [0, 0, 7, 0, 0, 5, 0, 4, 0],
-        [0, 0, 4, 0, 0, 0, 0, 0, 0],
-        [0, 0, 9, 0, 3, 0, 5, 0, 6],
-        [0, 0, 0, 5, 9, 0, 4, 3, 0],
-        [5, 0, 8, 0, 6, 0, 0, 1, 2],
-        [0, 0, 5, 0, 7, 0, 0, 0, 9],
-        [0, 0, 6, 0, 0, 0, 1, 5, 8],
-        [0, 0, 0, 2, 5, 6, 0, 0, 0]]
 
     def __init__(self, rows, cols, width, height, board):
         self.board = board
         self.rows = rows
         self.cols = cols
-        print(self.board)
         self.cells = [[Cell(self.board[i][j], i, j, width, height) for j in range(cols)] for i in range(rows)]
         self.width = width
         self.height = height
@@ -200,6 +179,7 @@ def redraw_window(win, surface, board, time, strikes, solved, solvermode):
     win.fill(white)
     titlefont = pygame.font.SysFont('calibri', 50)
     font = pygame.font.SysFont('calibri', 40)
+    WIN.blit(BG, (0,0))
 
     # Displays the title
     titlelabel = titlefont.render('Sudoku Game & Solver', 1, red)
@@ -232,9 +212,6 @@ def redraw_window(win, surface, board, time, strikes, solved, solvermode):
 def format_time(secs):
     sec = secs % 60
     min = secs // 60
-    hour = min // 60
-
-    (f"{1:02d}")
 
     for_time = f' {min:02d}:{sec:02d}'
     return for_time
@@ -251,7 +228,6 @@ def main(solvermode):
     else:
         new = sudoku_generator.SudokuGenerator()
         board = new.generate_puzzle()
-        print(board)
 
     key = None
     run = True
@@ -331,6 +307,7 @@ def menu():
     while run:
 
         WIN.fill(white)
+        WIN.blit(BG, (0,0))
         menufont = pygame.font.SysFont('calibri', 80)
         submenufont = pygame.font.SysFont('calibri', 60)
         menulabel1 = menufont.render('Suduko Game', 1, red)
@@ -368,6 +345,7 @@ def instructions():
     while run:
 
         WIN.fill(white)
+        WIN.blit(BG, (0,0))
 
         # setup fonts
         titlefont = pygame.font.SysFont('calibri', 50)
