@@ -1,11 +1,12 @@
 # Sudoku Game and Solver
 
-# CURRENTLY IN DEVELOPMENT SOME FEATURES LISTED BELOW ARE NOT YET IMPLEMENTED
+# CURRENTLY IN TESTING BUGS MAY EXIST
 
 # Pre-requisites
 
 Python 3.7
 Pygame 1.9.6
+suduko_generator.py from https://gist.github.com/lvngd/8c1aafc4851985bbd239bc59153f26f9 (used to generate new random boards in game mode)
  
 # Description
 
