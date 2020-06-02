@@ -4,8 +4,8 @@
 
 # Pre-requisites
 
-Python 3.7
-Pygame 1.9.6
+Python 3.7, 
+Pygame 1.9.6, 
 suduko_generator.py from https://gist.github.com/lvngd/8c1aafc4851985bbd239bc59153f26f9 (used to generate new random boards in game mode)
  
 # Description
