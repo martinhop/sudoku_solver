@@ -1,16 +1,4 @@
 
-testgrid = [
-     [9, 1, 0, 4, 0, 0, 0, 0, 0],
-     [0, 0, 7, 0, 0, 5, 0, 4, 0],
-     [0, 0, 4, 0, 0, 0, 0, 0, 0],
-     [0, 0, 9, 0, 3, 0, 5, 0, 6],
-     [0, 0, 0, 5, 9, 0, 4, 3, 0],
-     [5, 0, 8, 0, 6, 0, 0, 1, 2],
-     [0, 0, 5, 0, 7, 0, 0, 0, 9],
-     [0, 0, 6, 0, 0, 0, 1, 5, 8],
-     [0, 0, 0, 2, 5, 6, 0, 0, 0]]
-
-
 def print_grid(grid):
 
     # prints output to terminal
@@ -27,6 +15,15 @@ def empty_location(grid):
         for j in range(len(grid[0])):
             if grid[i][j] == 0:
                 return (i, j)
+    return None
+
+def not_empty_location(grid):
+
+    # checks if current location is empty and assign location not empty
+    for i in range(len(grid[0])):
+        for j in range(len(grid[0])):
+            if grid[i][j] != 0:
+                yield (i, j)
     return None
 
 
@@ -110,9 +107,3 @@ def move_ok(grid, row, col, num):
 
     # calls function to check move is valid
     return valid(grid, num, (row,col))
-
-
-if __name__ == '__main__':
-
-    autosolver(testgrid)
-    print_grid(testgrid)

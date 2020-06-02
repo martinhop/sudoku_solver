@@ -1,6 +1,7 @@
 import pygame
 import time
 from sudoku_solver import valid, solve, autosolver
+import sudoku_generator
 
 pygame.font.init()
 
@@ -194,7 +195,7 @@ class Cell:
         self.temp = val
 
 
-def redraw_window(win, surface, board, time, strikes, solved):
+def redraw_window(win, surface, board, time, strikes, solved, solvermode):
     """Redraws main game GUI window"""
     win.fill(white)
     titlefont = pygame.font.SysFont('calibri', 50)
@@ -205,12 +206,17 @@ def redraw_window(win, surface, board, time, strikes, solved):
     win.blit(titlelabel, (WIDTH / 2 - titlelabel.get_width() / 2, 10))
 
     # Display time
-    text = font.render("Time: " + format_time(time), 1, black)
-    win.blit(text, (WIDTH - SCROFFSETX - text.get_width(), 700))
+    if not solvermode:
+        text = font.render("Time: " + format_time(time), 1, black)
+        win.blit(text, (WIDTH - SCROFFSETX - text.get_width(), 700))
 
-    # incorrect guesses
-    text = font.render("X" * strikes, 1, red)
-    win.blit(text, (SCROFFSETX, 700))
+        # incorrect guesses in game mode or instructions in solver mode
+        text = font.render("X" * strikes, 1, red)
+        win.blit(text, (SCROFFSETX, 700))
+    else:
+        text = font.render("Enter known numbers and press 'space' to solve board", 1, red)
+        win.blit(text, (WIDTH/2 - text.get_width()/2, 700))
+
 
     # completed board
     if solved:
@@ -228,28 +234,24 @@ def format_time(secs):
     min = secs // 60
     hour = min // 60
 
-    for_time = str(min) + ':' + str(round(sec, 2))
+    (f"{1:02d}")
+
+    for_time = f' {min:02d}:{sec:02d}'
     return for_time
 
 
 # main game window
 def main(solvermode):
 
+
     if solvermode:
 
         # generates an empty grid
         board = [[0]*9 for _ in range(9)]
     else:
-        board = [
-        [9, 1, 0, 4, 0, 0, 0, 0, 0],
-        [0, 0, 7, 0, 0, 5, 0, 4, 0],
-        [0, 0, 4, 0, 0, 0, 0, 0, 0],
-        [0, 0, 9, 0, 3, 0, 5, 0, 6],
-        [0, 0, 0, 5, 9, 0, 4, 3, 0],
-        [5, 0, 8, 0, 6, 0, 0, 1, 2],
-        [0, 0, 5, 0, 7, 0, 0, 0, 9],
-        [0, 0, 6, 0, 0, 0, 1, 5, 8],
-        [0, 0, 0, 2, 5, 6, 0, 0, 0]]
+        new = sudoku_generator.SudokuGenerator()
+        board = new.generate_puzzle()
+        print(board)
 
     key = None
     run = True
@@ -317,7 +319,7 @@ def main(solvermode):
         if board.is_finished():
             solved = True
 
-        redraw_window(WIN, SUR, board, play_time, strikes, solved)
+        redraw_window(WIN, SUR, board, play_time, strikes, solved, solvermode)
         pygame.display.update()
 
 
